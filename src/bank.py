@@ -173,7 +173,8 @@ M(3, "Which of the following is true about derived attributes?",
 M(3, "Which of the following is true about a primary key?",
   ["Can be null", "Must be unique for each entity", "Must be more than one character", "All of the above"], 1, ["M23S"], "key")
 M(3, "Among several candidate keys, choosing a primary key is based on:",
-  ["The data type of the CK", "The uniqueness of the CK", "The name of the CK", "All of the above"], 1, ["M23S"], "key")
+  ["The data type of the CK", "The uniqueness of the CK", "The name of the CK", "All of the above"], 1, ["M23S"], "key",
+  "This is the official key. Every candidate key is unique by definition, so read it as: pick the key that best guarantees uniqueness.")
 M(3, "The entity type that does not have a primary key:",
   ["Composite entity type", "Strong entity type", "Weak entity type", "Partial entity type"], 2, ["M23S"], "key")
 M(3, "Select the true statement about a weak entity set in an ER diagram.",
@@ -230,7 +231,8 @@ for s, a, e in [
     ("A Customer may place multiple Orders.", True, "Customer 1 : M Order through Places."),
     ("Every Order must be managed by at least one Employee.", True, "Double line from Order to 'managed by' = total participation."),
     ("Product is the owner entity of OrderItems.", False, "The identifying relationship (double diamond) is Contains, so the owner is Order."),
-    ("The (min, max) on the Product side of the BelongsTo relationship is (0,1).", False, "A product can belong to many order items and need not have any: (0,N).")]:
+    ("The (min, max) on the Product side of the BelongsTo relationship is (0,1).", False, "A product can belong to many order items and need not have any: (0,N)."),
+    ("Each order must be placed by exactly one customer.", True, "Places is 1:M (one customer per order), and the double line on the Order side means every order must be placed.")]:
     TF(3, "Product/Order/Employee diagram: " + s, a, ["F24_1", "Q25_3"], "worked", e, img="customer_order_employee")
 for s, a, e in [
     ("Any Coach may train as many Athletes as he or she wishes.", False, "Train is 1:1."),
@@ -270,6 +272,8 @@ for s, a, e in [
     ("Some students may not have a major.", False, "Double line on the Student side = total participation."),
     ("A subject area cannot exist without students.", False, "Single line on the SubjectArea side = partial participation.")]:
     TF(4, "Person/Student/SubjectArea diagram: " + s, a, ["M24_1", "M25_3", "F25_2"], "worked", e, img="person_subject")
+TF(3, "Person/Student/SubjectArea diagram: Position is considered as a composed attribute.", False, ["F25_2"], "worked",
+   "Position is a simple oval with no sub-attributes.", img="person_subject")
 TF(4, "Product/Order/Employee diagram: The Customer and Employee entities could be generalized into a superclass Person.", True,
    ["F24_1"], "worked", "They share common attributes such as Name and Email.", img="customer_order_employee")
 TF(4, "Athlete diagram: It is possible to generalize the Coach and Athlete entities into a superclass.", True,
@@ -310,7 +314,7 @@ TF(5, "Person/SubjectArea diagram: Inserting the tuple <NULL, “Database manage
    ["M24_1", "M25_3", "F25_2"], "worked", "Subject is the primary key, so a NULL there violates entity integrity, not the key constraint.", img="person_subject")
 TF(5, "Person/SubjectArea diagram: Violating the referential integrity constraint occurs when a student is assigned a major in a subject that does not exist in the SubjectArea relation.", True,
    ["M24_1", "M25_3", "F25_2"], "worked", img="person_subject")
-TF(5, "The primary key of SubjectArea cannot be null.", True, ["F25_2"], "slides", "Entity integrity constraint.")
+TF(5, "Person/SubjectArea diagram: Subject attribute is a primary key that cannot be null.", True, ["F25_2"], "slides", "Entity integrity constraint.", img="person_subject")
 
 # ---------------------------------------------------------------- Chapter 6
 M(6, "Which of the following is NOT a step in building a database for an application?",
@@ -327,6 +331,8 @@ for s, a, e in [
     ("OrderItem primary key is LineItemID.", False, "OrderItem is weak: its key is the owner's key plus the partial key, (OrderID, LineItemID)."),
     ("Product entity is mapped into (ProductID, Name, Price, TaxPrice).", False, "TaxPrice is derived (dashed oval) and is not stored.")]:
     TF(6, "Product/Order/Employee diagram: " + s, a, ["F24_1"], "worked", e, img="customer_order_employee")
+TF(6, "Person/SubjectArea diagram: Employee entity is mapped into (EmpID, {Position}, salary, Name).", False, ["F25_2"], "worked",
+   "Position is single-valued, so it is not written in braces or split out, and the subclass relation also needs the superclass key ID.", img="person_subject")
 TF(6, "Athlete diagram: The Champion entity will be mapped into Champion(Year, Medal).", False, ["F23_1"], "worked",
    "Champion is weak, so it must include the owner's key: Champion(SSN, Year, Medal) with key (SSN, Year).", img="athlete")
 TF(6, "Athlete diagram: The name attribute of an Athlete will appear in the mapped relation as First and Last attributes.", True, ["F23_1"], "worked",
@@ -364,24 +370,26 @@ R(7, "Write the relational algebra: retrieve the name of all instructors who giv
   "The student used ENROLLED and lost 0.25; the grader corrected it to CLASS, which holds Croom.", ctx=ra_ctx)
 
 # ---------------------------------------------------------------- Chapter 8
-TF(8, "If the FROM clause lists two relations and there is no join condition, the result is the Cartesian product.", True, ["Q25_3b"], "marked")
-TF(8, "VARCHAR(n) is a fixed-length character string.", False, ["Q25_3b"], "slides", "CHAR(n) is fixed length; VARCHAR(n) is varying length.")
-TF(8, "The UNIQUE clause specifies alternate (secondary) keys.", True, ["Q25_3b"], "slides")
-TF(8, "A missing WHERE clause means all tuples are selected.", True, ["Q25_3b"], "slides")
-TF(8, "The DELETE command removes rows and the table structure.", False, ["F25_2"], "slides", "DELETE removes tuples only; DROP TABLE removes the structure.")
-TF(8, "ALTER TABLE can be used to add, modify or delete columns.", True, ["F25_2"], "slides")
-TF(8, "The IN operator matches any value in a list.", True, ["F25_2"], "slides")
-TF(8, "Foreign keys define referential integrity.", True, ["Q24_1b"], "slides")
-M(8, "Which clause is used to exclude group results?",
+TF(8, "If there are two relations specified in the FROM-clause and there is no join condition, then the CARTESIAN PRODUCT of tuples of both relations will be retrieved.", True, ["Q25_3b"], "slides",
+   "Chapter 8 DML slides. (The red mark on this item in the scan is a redaction, not an answer.)")
+TF(8, "VARCHAR(n) is an attribute datatype where it is a fixed length string and n is the number of characters.", False, ["Q25_3b"], "slides", "CHAR(n) is fixed length; VARCHAR(n) is varying length (Chapter 8 DDL).")
+TF(8, "UNIQUE clause specifies alternate secondary keys in the relations.", True, ["Q25_3b"], "slides", "Chapter 8 DDL: 'UNIQUE clause: specifies alternate secondary keys'.")
+TF(8, "A missing WHERE-clause means all tuples of the relations in the FROM-clause are selected.", True, ["Q25_3b"], "slides")
+TF(8, "The DELETE statement removes all rows from a table, and the table structure is also deleted.", False, ["F25_2"], "slides", "DELETE removes tuples only; DROP TABLE removes the structure.")
+TF(8, "You can use the ALTER TABLE statement to add, modify, or delete columns in an existing table.", True, ["F25_2"], "slides")
+TF(8, "The IN operator in SQL is used to check if a value matches any value in a list.", True, ["F25_2"], "slides")
+TF(8, "Foreign keys are used basically to define referential integrity constraints.", True, ["Q24_1b"], "slides")
+M(8, "Which clause should you use to exclude group results?",
   ["WHERE", "HAVING", "RESTRICT", "GROUP BY"], 1, ["Q24_1b"], "slides")
-M(8, "Which condition finds last names whose second character is 'a' or 'A'?",
-  ["UPPER(last_name) LIKE '_A%'", "UPPER(last_name) = '%A_'", "LOWER(last_name) = '_%a%'", "LOWER(last_name) LIKE '%A_'"], 0, ["Q24_1b"], "worked",
-  "'_' matches exactly one character and '%' any sequence. The '=' options do not do pattern matching at all.")
-M(8, "EMPLOYEE(EMPLOYEE_ID NUMBER PRIMARY KEY, FIRST_NAME VARCHAR2(25), LAST_NAME VARCHAR2(25)). Which INSERT statement will execute successfully?",
-  ["INSERT INTO employee VALUES (NULL, 'John', 'Smith');", "INSERT INTO employee (first_name, last_name) VALUES ('John', 'Smith');", "INSERT INTO employee VALUES (1000, 'John', NULL);", "INSERT INTO employee (first_name, last_name, employee_id) VALUES (1000, 'John', 'Smith');"], 2,
+M(8, "To display the last names including upper or lowercase letter 'a' or 'A' as the second character, which SQL statement is correct?",
+  ["SELECT last_name FROM employees WHERE UPPER(last_name) LIKE '_A%';", "SELECT last_name FROM employees WHERE UPPER(last_name) = '%A_';", "SELECT last_name FROM employees WHERE LOWER(last_name) = '_%a%';", "SELECT last_name FROM employees WHERE LOWER(last_name) LIKE '%A_';"], 0, ["Q24_1b"], "worked",
+  "'_' matches exactly one character and '%' any sequence. The '=' options do no pattern matching, and LOWER(...) can never contain 'A'.")
+M(8, "EMPLOYEE table: EMPLOYEE_ID NUMBER Primary Key, FIRST_NAME VARCHAR2(25), LAST_NAME VARCHAR2(25). Which statement inserts a row into the table?",
+  ["INSERT INTO employees VALUES (NULL, 'John', 'Smith');", "INSERT INTO employees (first_name, last_name) VALUES ('John', 'Smith');", "INSERT INTO employees VALUES (1000, 'John', NULL);", "INSERT INTO employees (first_name, last_name, employee_id) VALUES (1000, 'John', 'Smith');"], 2,
   ["Q24_1b"], "worked", "A and B leave the primary key NULL; D puts 'Smith' into the NUMBER column.")
 M(8, "CREATE TABLE Airport (Airport_Code char(4) NOT NULL, Name varchar(50), City varchar(20), PRIMARY KEY (Airport_Code)); Which table matches this definition?",
-  ["Codes like 101, 102 with Airport_Code as key", "Codes like 1001 with both Airport_Code and Name underlined as key", "Codes like 1001 with only Airport_Code underlined as key", "A column called AirName instead of Name"], 2, ["Q23_2"], "marked")
+  ["Codes like 101, 102 with Airport_Code as key", "Codes like 1001 with both Airport_Code and Name underlined as key", "Codes like 1001 with only Airport_Code underlined as key", "A column called AirName instead of Name"], 2, ["Q23_2"], "marked",
+  "This is the answer selected on the Blackboard screenshot, and it is the intended one: 4-character codes, only the primary key underlined. Strictly, 3-character codes like '101' would also fit in char(4), so option (a) is a trick.")
 M(8, "CREATE TABLE Seat_Reservation (Flight_No varchar(6) NOT NULL, Seat_No char(3) NOT NULL, Seat_class varchar(12), customer_Name varchar(50), Amount float(8) CHECK (Amount <= 15000), PRIMARY KEY (Flight_No, Seat_No), FOREIGN KEY (Flight_No) REFERENCES Flight); Which table matches?",
   ["Named Reservation, only Flight_No underlined", "Named Seat_Reservation, with Flight_No, Seat_No and customer_Name underlined", "Named Seat_Reservation, with Flight_No and Seat_No underlined", "Named Reservation, with Flight_No and Seat_No underlined"], 2, ["Q23_2"], "marked")
 
@@ -412,11 +420,13 @@ emp2_ctx = """<div class="tables"><table><caption>EMP</caption><tr><th>ID</th><t
 <tr><td>104</td><td>FADY</td><td>ENGINEER</td><td>40</td><td>600</td><td>NULL</td></tr><tr><td>105</td><td>HANY</td><td>TSUPPORT</td><td>50</td><td>550</td><td>50</td></tr></table>
 <table><caption>DEPT</caption><tr><th>DNO</th><th>DNAME</th><th>LOC</th></tr><tr><td>10</td><td>MARKETING</td><td>Riyadh</td></tr><tr><td>20</td><td>SUPPORT</td><td>Jeddah</td></tr><tr><td>30</td><td>MANAGEMENT</td><td>Dammam</td></tr><tr><td>40</td><td>PRODUCTION</td><td>Hael</td></tr><tr><td>50</td><td>IT</td><td>Jeddah</td></tr></table></div>"""
 F4 = ["Q24_1b"]
-M(8, "What is the maximum salary of employees in the IT department?", ["400", "550", "600", "950"], 1, F4, "worked", "IT is DNO 50: ALI 400, HANY 550.", ctx=emp2_ctx)
-M(8, "SELECT id, ename FROM emp WHERE ename LIKE '_M%';", ["100 AMR, 103 AMANY", "100 AMR only", "101 SAMY", "No rows"], 0, F4, "worked",
+M(8, "SELECT MAX(salary) FROM emp WHERE dno IN (SELECT dno FROM dept WHERE dname = 'IT');", ["400", "550", "600", "950"], 1, F4, "worked", "IT is DNO 50: ALI 400, HANY 550.", ctx=emp2_ctx)
+M(8, "SELECT ename, id FROM emp WHERE ename LIKE '_M%';", ["AMR 100, AMANY 103", "AMR 100 only", "SAMY 101", "No rows"], 0, F4, "worked",
   "Second letter M: A<b>M</b>R, A<b>M</b>ANY.", ctx=emp2_ctx)
-M(8, "INSERT INTO emp(id, ename, job, dno, salary) VALUES (110, 'RAMY', 'TEACHER', 60, 4500); What will happen?",
-  ["The row is inserted", "Error: department 60 does not exist (referential integrity)", "Error: duplicate ID", "The row is inserted with DNO NULL"], 1, F4, "worked", ctx=emp2_ctx)
+M(8, "SELECT LOWER(ENAME), UPPER(ENAME) FROM EMP WHERE ID IN (100, 103);", ["amr AMR; amany AMANY", "AMR amr; AMANY amany", "amr AMR only", "Every row in EMP"], 0, F4, "worked", ctx=emp2_ctx)
+M(8, "INSERT INTO emp(id, name, job, dno, salary) VALUES (110, 'RAMY', 'TEACHER', 60, 4500); What will happen?",
+  ["The row is inserted", "It is rejected with an error", "The row is inserted with DNO NULL", "The row is inserted and department 60 is created"], 1, F4, "worked",
+  "Two problems, either of which rejects it: EMP has no column called NAME (it is ENAME), and department 60 does not exist in DEPT, which violates referential integrity.", ctx=emp2_ctx)
 M(8, "SELECT ename, salary FROM emp WHERE comm IS NULL UNION SELECT ename, salary FROM emp WHERE salary > 400;",
   ["SAMY 400, AMANY 300, FADY 600, HANY 550", "SAMY 400, AMANY 300, FADY 600", "FADY 600, HANY 550", "SAMY, AMANY, FADY, FADY, HANY"], 0, F4, "worked",
   "COMM null: SAMY, AMANY, FADY. Salary > 400: FADY, HANY. UNION removes the duplicate FADY.", ctx=emp2_ctx)
@@ -453,11 +463,19 @@ pat_ctx = """<div class="tables"><table><caption>PATIENT</caption><tr><th>patien
 <table><caption>DOCTOR</caption><tr><th>doctor_id</th><th>first_name</th><th>Specialty</th></tr><tr><td>1</td><td>Abdullah</td><td>Cardiology</td></tr><tr><td>2</td><td>Noura</td><td>Orthopedics</td></tr><tr><td>3</td><td>Layla</td><td>Pediatrics</td></tr><tr><td>4</td><td>Faisal</td><td>General Surgery</td></tr></table>
 <p class="note">Phone and time columns omitted. As printed in the exam, APPOINTMENT.doctor_id values (101–104) do not match DOCTOR ids (1–4).</p></div>"""
 F1 = ["F24_1"]
-M(8, "How many tuples are returned by: SELECT first_name FROM APPOINTMENT A, DOCTOR D WHERE A.doctor_id = D.doctor_id AND first_name = 'Nora';", ["0", "1", "4", "16"], 0, F1, "worked",
+M(8, "How many tuples will be returned by: SELECT first_name FROM APPOINTMENT A, DOCTOR D WHERE A.doctor_id = D.doctor_id AND first_name = 'Nora';", ["0", "1", "4", "16"], 0, F1, "worked",
   "No doctor is called 'Nora' (the table has 'Noura'), and the doctor ids don't match anyway.", ctx=pat_ctx)
-M(8, "How many tuples are returned by: SELECT * FROM APPOINTMENT NATURAL JOIN PATIENT;", ["0", "4", "8", "16"], 1, F1, "worked",
-  "The common attribute is patient_id and every appointment's patient exists.", ctx=pat_ctx)
-M(8, "How many tuples are returned by: SELECT * FROM APPOINTMENT, PATIENT;", ["4", "8", "16", "0"], 2, F1, "worked", "Cartesian product: 4 × 4.", ctx=pat_ctx)
+M(8, "How many tuples will be returned from: SELECT first_name FROM APPOINTMENT NATURAL JOIN PATIENT;", ["0", "4", "8", "16"], 1, F1, "worked",
+  "The intended common attribute is patient_id, and every appointment's patient exists, so 4. Watch out: the exam's table spells the APPOINTMENT column 'pathient_id'. Taken literally there would be no common column, and a natural join with no common column is a Cartesian product (16). 4 is almost certainly the intended answer.", ctx=pat_ctx)
+M(8, "How many tuples will be returned from: SELECT first_name FROM APPOINTMENT, PATIENT;", ["4", "8", "16", "0"], 2, F1, "worked", "Cartesian product: 4 × 4.", ctx=pat_ctx)
+M(8, "Given the CREATE statement from Q1 (a patient can't be removed while they have an appointment), how many tuples will be deleted from PATIENT by: DELETE FROM PATIENT WHERE address LIKE 'Riyadh%';", ["0", "1", "4", "2"], 0, F1, "worked",
+  "Patient 1 lives in Riyadh but has appointment 1, so the delete is rejected.", ctx=pat_ctx)
+R(8, "Write an SQL statement that retrieves the doctor_id and the number of appointments for each doctor who has more than three appointments, sorting the results by the number of appointments from high to low.",
+  "<pre>SELECT doctor_id, COUNT(*) AS num_appointments\nFROM APPOINTMENT\nGROUP BY doctor_id\nHAVING COUNT(*) > 3\nORDER BY COUNT(*) DESC;</pre>", F1, "slides", ctx=pat_ctx)
+R(8, "Rewrite using one of the set operations: SELECT doctor_id FROM DOCTOR WHERE specialty = 'Pediatrics' OR first_name = 'Abdullah';",
+  "<pre>SELECT doctor_id FROM DOCTOR WHERE specialty = 'Pediatrics'\nUNION\nSELECT doctor_id FROM DOCTOR WHERE first_name = 'Abdullah';</pre>", F1, "slides", ctx=pat_ctx)
+R(8, "Write an SQL statement that updates the date of the appointment with appointment_id 2 to be 3-11-2024.",
+  "<pre>UPDATE APPOINTMENT\nSET appointment_date = '3-11-2024'\nWHERE appointment_id = 2;</pre>", F1, "slides", ctx=pat_ctx)
 R(8, "Create the APPOINTMENT table so that a doctor or patient cannot be deleted while they have an appointment, and every attribute except reason is NOT NULL.",
   "<pre>CREATE TABLE APPOINTMENT (\n  appointment_id   INT NOT NULL,\n  patient_id       INT NOT NULL,\n  doctor_id        INT NOT NULL,\n  appointment_date DATE NOT NULL,\n  appoint_time     TIME NOT NULL,\n  reason           VARCHAR(100),\n  PRIMARY KEY (appointment_id),\n  FOREIGN KEY (patient_id) REFERENCES PATIENT(patient_id) ON DELETE RESTRICT,\n  FOREIGN KEY (doctor_id)  REFERENCES DOCTOR(doctor_id)   ON DELETE RESTRICT\n);</pre>",
   F1, "slides", ctx=pat_ctx)

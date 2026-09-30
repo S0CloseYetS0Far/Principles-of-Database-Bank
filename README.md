@@ -1,6 +1,6 @@
 # Principles of Database Bank
 
-Practice site for **CS370 Introduction to Database** (Imam Mohammad Ibn Saud Islamic University): 228 questions from past midterms, finals and quizzes, sorted by chapter (1–9), with instant checking.
+Practice site for **CS370 Introduction to Database** (Imam Mohammad Ibn Saud Islamic University): 236 questions from past midterms, finals and quizzes, sorted by chapter (1–9), with instant checking.
 
 Open `index.html` in any browser. It is a single self-contained file that works offline.
 

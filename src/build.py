@@ -21,7 +21,7 @@ SOURCES = {
  "Q25_1": ("Quiz 1, 1st semester 2025/2026", "Exams/Quiz/2025/Quiz1-1st Semester 2025_2026.pdf", "No answers on the paper; answers from the slides"),
  "Q25_2": ("Quiz 1, 2nd semester 2025", "Exams/Quiz/2025/Quiz1_2nd_2025.pdf", "No answers on the paper; answers from the slides"),
  "Q25_3": ("Quiz 1, 3rd semester 2025", "Exams/Quiz/2025/Quiz1_3rd_2025.pdf", "No answers on the paper; answers from the slides and the diagram"),
- "Q25_3b":("Quiz 2, 3rd semester 2025", "Exams/Quiz/2025/Quiz2_3rd_2025.pdf", "One answer marked on the paper; the rest from the slides"),
+ "Q25_3b":("Quiz 2, 3rd semester 2025", "Exams/Quiz/2025/Quiz2_3rd_2025.pdf", "No answers on the paper (the red mark on item 1 is a redaction); answers from the slides"),
  "Q26_2": ("Quiz 1, 2nd semester 2026", "Exams/Quiz/2026/Quiz1_2nd_2026.pdf", "Written questions; answers from the slides"),
  "Q22":   ("Quiz 1, Fall 2022", "Exams/Quiz/Quiz1-Fall2022/", "Graded student paper; answers taken from the parts marked correct"),
  "Q21":   ("Quiz 1, Fall 2021 (Ms. Amal Alamr)", "Exams/Quiz/Quiz1-Ms.AmalAlamr-Fall2021-cs370/", "Graded student paper; both MCQs were marked wrong, so the correct choice is from the slides"),
