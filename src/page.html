@@ -1,0 +1,388 @@
+<title>CS370 Exam Bank</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: exam-paper workspace — chapter tabs on top, question sheet on the left, a printed-style answer grid on the right; blue pen = your answer, red pen = marking. */
+:root {
+  --bg: #eef1ed;
+  --paper: #fbfcfa;
+  --ink: #1a2029;
+  --muted: #5a6370;
+  --line: #d3d9d2;
+  --pen: #2c43b0;
+  --pen-soft: #e3e7fb;
+  --ok: #1d7a4a;
+  --ok-soft: #e0f2e8;
+  --bad: #c2352c;
+  --bad-soft: #fbe4e2;
+  --warn: #946200;
+  --chip: #e4e8e3;
+  --shadow: 0 1px 2px rgba(20,30,20,.06), 0 6px 24px rgba(20,30,20,.06);
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #11151b; --paper: #181d25; --ink: #e4e8ee; --muted: #9aa3b1; --line: #2b323d;
+  --pen: #93a5ff; --pen-soft: #242c4d; --ok: #5dd199; --ok-soft: #173427; --bad: #ff7d72; --bad-soft: #3d1f1d;
+  --warn: #e0b04a; --chip: #232a34; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 24px rgba(0,0,0,.25); color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #11151b; --paper: #181d25; --ink: #e4e8ee; --muted: #9aa3b1; --line: #2b323d;
+  --pen: #93a5ff; --pen-soft: #242c4d; --ok: #5dd199; --ok-soft: #173427; --bad: #ff7d72; --bad-soft: #3d1f1d;
+  --warn: #e0b04a; --chip: #232a34; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 24px rgba(0,0,0,.25); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 16px/1.55 var(--f-body); margin: 0; }
+.wrap { max-width: 1120px; margin: 0 auto; padding-inline: 16px; padding-block: 28px 64px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, select:focus-visible, a:focus-visible { outline: 2px solid var(--pen); outline-offset: 2px; }
+.eyebrow { font: 600 12px/1 var(--f-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+
+header.top { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 16px 32px; margin-bottom: 22px; }
+header.top h1 { font-size: clamp(34px, 6vw, 52px); font-weight: 700; letter-spacing: -.02em; margin-top: 8px; }
+header.top p { margin: 8px 0 0; color: var(--muted); max-width: 60ch; }
+.score { display: flex; gap: 22px; font-variant-numeric: tabular-nums; }
+.score div { display: grid; gap: 2px; }
+.score b { font: 700 26px/1 var(--f-display); }
+.score span { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+.score .g b { color: var(--ok); } .score .r b { color: var(--bad); }
+
+nav.chapters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.chap { border: 1px solid var(--line); background: var(--paper); border-radius: 10px; padding: 8px 12px; display: grid; gap: 2px; text-align: left; min-width: 0; }
+.chap .n { font: 600 14px/1.1 var(--f-display); }
+.chap .t { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.chap .bar { height: 3px; border-radius: 2px; background: var(--chip); overflow: hidden; margin-top: 4px; }
+.chap .bar i { display: block; height: 100%; background: var(--ok); }
+.chap[aria-pressed="true"] { border-color: var(--pen); background: var(--pen-soft); }
+.chap[aria-pressed="true"] .n { color: var(--pen); }
+.chtitle { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 20px; margin: 6px 0 16px; }
+.chtitle h2 { font-size: 24px; font-weight: 600; }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.tools select, .btn { border: 1px solid var(--line); background: var(--paper); border-radius: 8px; padding: 7px 12px; font-size: 14px; color: var(--ink); }
+.btn:hover { border-color: var(--muted); }
+.btn.primary { background: var(--pen); border-color: var(--pen); color: var(--paper); font-weight: 600; }
+.btn[disabled] { opacity: .4; cursor: default; }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
+@media (max-width: 860px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+
+.sheet { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: clamp(18px, 3vw, 30px); min-width: 0; }
+.qmeta { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; margin-bottom: 14px; font-size: 13px; color: var(--muted); }
+.qmeta .num { font: 700 13px/1 var(--f-mono); color: var(--ink); }
+.pill { font: 600 11px/1 var(--f-mono); letter-spacing: .05em; text-transform: uppercase; padding: 5px 8px; border-radius: 5px; background: var(--chip); color: var(--muted); }
+.figure { margin: 0 0 16px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fff; }
+.figure img { display: block; width: 100%; height: auto; }
+.figure figcaption { font-size: 12px; color: #555; padding: 6px 10px; border-top: 1px solid #e5e5e5; background: #fafafa; }
+.ctx { margin-bottom: 16px; overflow-x: auto; }
+.ctx pre, .answer pre { font: 13px/1.5 var(--f-mono); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 0; overflow-x: auto; white-space: pre; }
+.tables { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-start; }
+.tables table { border-collapse: collapse; font: 12.5px/1.35 var(--f-mono); font-variant-numeric: tabular-nums; }
+.tables caption { text-align: left; font-weight: 600; padding-bottom: 4px; color: var(--muted); letter-spacing: .04em; }
+.tables th, .tables td { border: 1px solid var(--line); padding: 3px 7px; text-align: left; white-space: nowrap; }
+.tables th { background: var(--chip); font-weight: 600; }
+.tables .note { flex-basis: 100%; margin: 0; font-size: 12.5px; color: var(--muted); }
+.qtext { font-size: 18.5px; line-height: 1.5; font-weight: 500; margin: 0 0 18px; max-width: 70ch; }
+.opts { display: grid; gap: 8px; }
+.opt { display: grid; grid-template-columns: 30px minmax(0,1fr) auto; gap: 10px; align-items: center; text-align: left; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); padding: 10px 12px; transition: border-color .12s, background .12s; }
+.opt:hover:not([disabled]) { border-color: var(--pen); background: var(--pen-soft); }
+.opt .l { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--line); display: grid; place-items: center; font: 600 13px/1 var(--f-mono); color: var(--muted); }
+.opt .mk { font: 600 12px/1 var(--f-mono); letter-spacing: .04em; }
+.opt[disabled] { cursor: default; }
+.opt.right { border-color: var(--ok); background: var(--ok-soft); }
+.opt.right .l { border-color: var(--ok); background: var(--ok); color: var(--paper); }
+.opt.right .mk { color: var(--ok); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt.wrong .l { border-color: var(--bad); color: var(--bad); }
+.opt.wrong .txt { text-decoration: line-through; text-decoration-color: var(--bad); }
+.opt.wrong .mk { color: var(--bad); }
+.opt.picked .l { box-shadow: 0 0 0 3px var(--pen-soft); }
+.opts.tf { grid-template-columns: 1fr 1fr; }
+
+.answer { margin-top: 16px; border: 1px dashed var(--line); border-radius: 10px; padding: 14px 16px; background: var(--bg); }
+.answer .model { font-size: 15px; line-height: 1.6; overflow-x: auto; }
+.selfmark { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.feedback { margin-top: 16px; display: grid; gap: 10px; }
+.verdict { font: 700 18px/1.2 var(--f-display); }
+.verdict.ok { color: var(--ok); } .verdict.no { color: var(--bad); }
+.why { margin: 0; color: var(--ink); max-width: 70ch; }
+.srcline { display: grid; gap: 4px; font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; }
+.srcline b { color: var(--ink); font-weight: 600; }
+.prov { display: inline-block; font: 600 11px/1 var(--f-mono); letter-spacing: .04em; padding: 4px 7px; border-radius: 5px; margin-right: 6px; vertical-align: 1px; }
+.prov.key, .prov.graded { background: var(--ok-soft); color: var(--ok); }
+.prov.marked { background: var(--pen-soft); color: var(--pen); }
+.prov.slides, .prov.worked { background: var(--chip); color: var(--warn); }
+.nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+.kbd { font-size: 12px; color: var(--muted); align-self: center; }
+.empty { text-align: center; padding: 40px 10px; color: var(--muted); }
+
+aside.card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 16px; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
+@media (max-width: 860px) { aside.card { position: static; } }
+aside h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+aside .sub { font-size: 12.5px; color: var(--muted); margin: 0 0 12px; }
+.answergrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); border-left: 1px solid var(--line); border-top: 1px solid var(--line); max-height: 420px; overflow-y: auto; }
+.cell { border: 0; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: transparent; padding: 3px 0 5px; display: grid; justify-items: center; gap: 1px; min-height: 44px; }
+.cell .i { font: 500 10px/1 var(--f-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.cell .a { font: 600 17px/1.1 "Segoe Print", "Bradley Hand", "Comic Sans MS", cursive; color: var(--pen); min-height: 19px; }
+.cell.ok { background: var(--ok-soft); } .cell.no { background: var(--bad-soft); }
+.cell.no .a { color: var(--bad); }
+.cell.cur { outline: 2px solid var(--pen); outline-offset: -2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 12px; font-size: 12px; color: var(--muted); }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+
+section.sources { margin-top: 56px; border-top: 2px solid var(--ink); padding-top: 22px; }
+section.sources h2 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+section.sources > p { color: var(--muted); max-width: 70ch; margin: 0 0 18px; }
+.provkey { display: grid; gap: 8px; margin: 0 0 24px; padding: 0; list-style: none; max-width: 80ch; font-size: 14px; }
+.tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); }
+table.src { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 640px; }
+table.src th, table.src td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.src th { font: 600 11px/1.2 var(--f-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); background: var(--bg); }
+table.src td.f { font: 12px/1.4 var(--f-mono); color: var(--muted); word-break: break-all; }
+table.src td.c { font-variant-numeric: tabular-nums; text-align: right; }
+table.src tr:last-child td { border-bottom: 0; }
+h3.sub2 { font-size: 18px; margin: 28px 0 10px; }
+ul.skip { margin: 0; padding-left: 20px; color: var(--muted); font-size: 14px; max-width: 80ch; display: grid; gap: 6px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">CS370 · Introduction to Database · Imam University</div>
+      <h1>Exam Bank</h1>
+      <p id="lede">Past midterm, final and quiz questions, sorted by chapter. Pick an answer to check it; every question says which paper it came from and where its answer came from.</p>
+    </div>
+    <div class="score" aria-live="polite">
+      <div><b id="sDone">0</b><span>Answered</span></div>
+      <div class="g"><b id="sOk">0</b><span>Correct</span></div>
+      <div class="r"><b id="sNo">0</b><span>Missed</span></div>
+    </div>
+  </header>
+
+  <nav class="chapters" id="chapters" aria-label="Chapters"></nav>
+
+  <div class="chtitle">
+    <h2 id="chName">All chapters</h2>
+    <div class="tools">
+      <label class="eyebrow" for="filter">Show</label>
+      <select id="filter">
+        <option value="all">All questions</option>
+        <option value="todo">Not answered yet</option>
+        <option value="missed">Ones I missed</option>
+        <option value="mcq">Multiple choice &amp; T/F only</option>
+        <option value="reveal">Written answers only</option>
+      </select>
+      <button class="btn" id="shuffle" type="button" aria-pressed="false">Shuffle</button>
+      <button class="btn" id="reset" type="button">Clear answers</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <main class="sheet" id="sheet"></main>
+    <aside class="card">
+      <h3>Answer sheet</h3>
+      <p class="sub" id="sheetSub">Tap a box to jump to that question.</p>
+      <div class="answergrid" id="agrid"></div>
+      <div class="legend"><span><i style="background:var(--ok-soft);border:1px solid var(--ok)"></i>Correct</span><span><i style="background:var(--bad-soft);border:1px solid var(--bad)"></i>Missed</span><span><i style="border:1px solid var(--line)"></i>Not answered</span></div>
+      <p class="sub" id="confirmReset" hidden style="margin-top:12px">Clear your answers for this view? <button class="btn" id="resetYes" type="button">Clear</button> <button class="btn" id="resetNo" type="button">Keep</button></p>
+    </aside>
+  </div>
+
+  <section class="sources" id="sources">
+    <h2>Where the questions and answers came from</h2>
+    <p>Questions come from the <b>Exams</b> folder. Chapter placement and the answers to unmarked papers come from the <b>slides</b> folder. Every question shows one of these labels once you answer it:</p>
+    <ul class="provkey">
+      <li><span class="prov key">OFFICIAL KEY</span> The answer key printed in the exam file (model answer).</li>
+      <li><span class="prov graded">GRADED PAPER</span> A student's paper that the instructor marked correct (or marked wrong, so the other answer is right).</li>
+      <li><span class="prov marked">MARKED + CHECKED</span> An answer selected on a quiz screenshot or boxed on the paper, which I checked against the slides.</li>
+      <li><span class="prov slides">FROM SLIDES</span> The paper has no answer; the answer comes from the chapter slides.</li>
+      <li><span class="prov worked">WORKED OUT</span> The paper has no answer; I worked it out from the tables or diagram printed in the question.</li>
+    </ul>
+    <h3 class="sub2">Exam files used</h3>
+    <div class="tablewrap"><table class="src" id="srcTable"></table></div>
+    <h3 class="sub2">Slides used for each chapter</h3>
+    <div class="tablewrap"><table class="src" id="chTable"></table></div>
+    <h3 class="sub2">Left out</h3>
+    <ul class="skip" id="skipList"></ul>
+  </section>
+</div>
+
+<script>
+const DATA = /*__DATA__*/null;
+const LETTERS = "abcdefgh";
+const PROV = { key: "OFFICIAL KEY", graded: "GRADED PAPER", marked: "MARKED + CHECKED", slides: "FROM SLIDES", worked: "WORKED OUT" };
+const STORE = "cs370-exam-bank-v1";
+let state = {};
+try { state = JSON.parse(localStorage.getItem(STORE) || "{}") || {}; } catch (e) { state = {}; }
+const save = () => { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} };
+
+let chapter = 0, filter = "all", shuffled = false, list = [], pos = 0, order = {};
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+function seededShuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+function pool() {
+  let qs = DATA.q.filter(q => !chapter || q.ch === chapter);
+  if (filter === "todo") qs = qs.filter(q => !state[q.id]);
+  if (filter === "missed") qs = qs.filter(q => state[q.id] && !state[q.id].ok);
+  if (filter === "mcq") qs = qs.filter(q => q.t === "mcq");
+  if (filter === "reveal") qs = qs.filter(q => q.t === "reveal");
+  return qs;
+}
+function rebuild(keepId) {
+  let qs = pool();
+  if (shuffled) {
+    const key = chapter + ":" + filter;
+    if (!order[key] || order[key].length !== qs.length) order[key] = seededShuffle(qs.map(q => q.id));
+    const idx = Object.fromEntries(order[key].map((id, i) => [id, i]));
+    qs.sort((a, b) => idx[a.id] - idx[b.id]);
+  }
+  list = qs;
+  const k = keepId ? list.findIndex(q => q.id === keepId) : -1;
+  pos = k >= 0 ? k : Math.min(pos, Math.max(0, list.length - 1));
+  render();
+}
+
+function renderChapters() {
+  const nav = $("chapters");
+  const btn = (n, label, sub, qs) => {
+    const done = qs.filter(q => state[q.id]).length, ok = qs.filter(q => state[q.id] && state[q.id].ok).length;
+    return `<button class="chap" type="button" data-ch="${n}" aria-pressed="${chapter === n}" title="${esc(sub)}">
+      <span class="n">${label}</span><span class="t">${done}/${qs.length} done · ${ok} right</span>
+      <span class="bar"><i style="width:${qs.length ? (ok / qs.length * 100) : 0}%"></i></span></button>`;
+  };
+  let h = btn(0, "All", "All chapters", DATA.q);
+  for (const [n, c] of Object.entries(DATA.ch)) h += btn(+n, "Ch " + n, c.n, DATA.q.filter(q => q.ch === +n));
+  nav.innerHTML = h;
+  nav.querySelectorAll(".chap").forEach(b => b.onclick = () => { chapter = +b.dataset.ch; pos = 0; renderChapters(); rebuild(); });
+  $("chName").textContent = chapter ? `Chapter ${chapter} · ${DATA.ch[chapter].n}` : "All chapters";
+}
+
+function renderScore() {
+  const vals = Object.values(state);
+  $("sDone").textContent = vals.length;
+  $("sOk").textContent = vals.filter(v => v.ok).length;
+  $("sNo").textContent = vals.filter(v => !v.ok).length;
+}
+
+function srcHtml(q) {
+  const papers = q.s.map(k => `<b>${esc(DATA.src[k].n)}</b> <span>(${esc(DATA.src[k].f)})</span>`).join("<br>");
+  const slide = `Chapter ${q.ch} slides (${esc(DATA.ch[q.ch].f)})`;
+  return `<div class="srcline"><div><span class="prov ${q.p}">${PROV[q.p]}</span>${q.p === "slides" ? "Answer from " + slide : q.p === "worked" ? "Answer worked out from the exam's own tables/diagram" : "Answer from the exam paper"}</div><div>Question from: ${papers}</div></div>`;
+}
+
+function render() {
+  renderScore();
+  const sheet = $("sheet");
+  if (!list.length) {
+    sheet.innerHTML = `<div class="empty"><h3>Nothing here yet</h3><p>${filter === "missed" ? "You haven't missed any questions in this view." : filter === "todo" ? "You've answered every question in this view." : "No questions match."}</p><button class="btn" type="button" id="showAll">Show all questions</button></div>`;
+    $("showAll").onclick = () => { filter = "all"; $("filter").value = "all"; rebuild(); };
+    renderGrid(); return;
+  }
+  const q = list[pos], st = state[q.id];
+  const isTF = q.t === "mcq" && q.o.length === 2 && q.o[0] === "True";
+  let h = `<div class="qmeta"><span class="num">Q ${pos + 1} / ${list.length}</span><span class="pill">Chapter ${q.ch}</span><span class="pill">${q.t === "reveal" ? "Written" : isTF ? "True / False" : "Multiple choice"}</span></div>`;
+  if (q.img) h += `<figure class="figure"><img src="${DATA.img[q.img]}" alt="Diagram from the exam paper"><figcaption>Diagram from the exam paper</figcaption></figure>`;
+  if (q.ctx) h += `<div class="ctx">${q.ctx}</div>`;
+  h += `<p class="qtext">${q.q}</p>`;
+  if (q.t === "mcq") {
+    h += `<div class="opts${isTF ? " tf" : ""}" role="group" aria-label="Answer choices">` + q.o.map((o, i) => {
+      let cls = "", mk = "";
+      if (st) {
+        if (i === q.a) { cls = "right"; mk = "✓ correct"; }
+        else if (i === st.pick) { cls = "wrong"; mk = "✗ your answer"; }
+        if (i === st.pick) cls += " picked";
+      }
+      return `<button class="opt ${cls}" type="button" data-i="${i}" ${st ? "disabled" : ""}><span class="l">${isTF ? o[0] : LETTERS[i]}</span><span class="txt">${esc(o)}</span><span class="mk">${mk}</span></button>`;
+    }).join("") + `</div>`;
+    if (st) {
+      h += `<div class="feedback"><div class="verdict ${st.ok ? "ok" : "no"}">${st.ok ? "Correct" : "Not quite. The answer is " + (isTF ? q.o[q.a] : "(" + LETTERS[q.a] + ") " + esc(q.o[q.a]))}</div>${q.e ? `<p class="why">${q.e}</p>` : ""}${srcHtml(q)}</div>`;
+    }
+  } else {
+    const shown = st || (q._shown);
+    if (!shown) h += `<button class="btn primary" type="button" id="reveal">Show model answer</button> <span class="kbd">Try writing it first.</span>`;
+    else {
+      h += `<div class="answer"><div class="eyebrow" style="margin-bottom:8px">Model answer</div><div class="model">${q.ans}</div></div>`;
+      h += `<div class="feedback">${q.e ? `<p class="why">${q.e}</p>` : ""}`;
+      if (!st) h += `<div class="selfmark"><span class="kbd">How did you do?</span><button class="btn" type="button" data-self="1">I got it</button><button class="btn" type="button" data-self="0">I missed it</button></div>`;
+      else h += `<div class="verdict ${st.ok ? "ok" : "no"}">${st.ok ? "Marked as got it" : "Marked as missed"}</div>`;
+      h += srcHtml(q) + `</div>`;
+    }
+  }
+  h += `<div class="nav"><button class="btn" type="button" id="prev" ${pos === 0 ? "disabled" : ""}>← Previous</button><span class="kbd">Keys: a–d or t/f to answer, ← → to move</span><button class="btn primary" type="button" id="next" ${pos >= list.length - 1 ? "disabled" : ""}>Next →</button></div>`;
+  sheet.innerHTML = h;
+  sheet.querySelectorAll(".opt:not([disabled])").forEach(b => b.onclick = () => answer(q, +b.dataset.i));
+  if ($("reveal")) $("reveal").onclick = () => { q._shown = true; render(); };
+  sheet.querySelectorAll("[data-self]").forEach(b => b.onclick = () => { state[q.id] = { pick: -1, ok: b.dataset.self === "1" }; save(); renderChapters(); render(); });
+  $("prev").onclick = () => go(-1);
+  $("next").onclick = () => go(1);
+  renderGrid();
+}
+
+function answer(q, i) {
+  state[q.id] = { pick: i, ok: i === q.a };
+  save(); renderChapters(); render();
+}
+function go(d) {
+  const n = pos + d;
+  if (n < 0 || n >= list.length) return;
+  pos = n; render();
+  $("sheet").scrollIntoView({ block: "nearest", behavior: "smooth" });
+}
+
+function renderGrid() {
+  const g = $("agrid");
+  g.innerHTML = list.map((q, i) => {
+    const st = state[q.id];
+    let a = "";
+    if (st) a = q.t === "reveal" ? (st.ok ? "✓" : "✗") : (q.o.length === 2 && q.o[0] === "True" ? q.o[st.pick][0] : LETTERS[st.pick]);
+    return `<button class="cell ${st ? (st.ok ? "ok" : "no") : ""} ${i === pos ? "cur" : ""}" type="button" data-i="${i}" aria-label="Question ${i + 1}${st ? (st.ok ? ", correct" : ", missed") : ""}"><span class="i">${i + 1}</span><span class="a">${a}</span></button>`;
+  }).join("");
+  g.querySelectorAll(".cell").forEach(c => c.onclick = () => { pos = +c.dataset.i; render(); });
+  const cur = g.querySelector(".cur");
+  if (cur) { const top = cur.offsetTop - g.offsetTop; if (top < g.scrollTop || top > g.scrollTop + g.clientHeight - 44) g.scrollTop = top - 60; }
+  $("sheetSub").textContent = `${list.length} question${list.length === 1 ? "" : "s"} in this view. Tap a box to jump.`;
+}
+
+document.addEventListener("keydown", e => {
+  if (e.target.closest("select, input, textarea") || e.metaKey || e.ctrlKey || e.altKey) return;
+  const q = list[pos]; if (!q) return;
+  if (e.key === "ArrowRight") return go(1);
+  if (e.key === "ArrowLeft") return go(-1);
+  if (q.t !== "mcq" || state[q.id]) return;
+  const k = e.key.toLowerCase();
+  const isTF = q.o.length === 2 && q.o[0] === "True";
+  let i = isTF ? (k === "t" ? 0 : k === "f" ? 1 : -1) : LETTERS.indexOf(k);
+  if (i < 0 && /^[1-9]$/.test(k)) i = +k - 1;
+  if (i >= 0 && i < q.o.length) answer(q, i);
+});
+$("filter").onchange = e => { filter = e.target.value; pos = 0; rebuild(); };
+$("shuffle").onclick = () => { shuffled = !shuffled; order = {}; $("shuffle").setAttribute("aria-pressed", shuffled); $("shuffle").textContent = shuffled ? "Shuffled" : "Shuffle"; pos = 0; rebuild(); };
+$("reset").onclick = () => { $("confirmReset").hidden = false; };
+$("resetNo").onclick = () => { $("confirmReset").hidden = true; };
+$("resetYes").onclick = () => {
+  DATA.q.filter(q => !chapter || q.ch === chapter).forEach(q => { delete state[q.id]; delete q._shown; });
+  save(); $("confirmReset").hidden = true; renderChapters(); rebuild();
+};
+
+// sources section
+(function sources() {
+  const used = {};
+  DATA.q.forEach(q => q.s.forEach(s => used[s] = (used[s] || 0) + 1));
+  $("srcTable").innerHTML = `<tr><th>Exam</th><th>File (in Exams/Exams/)</th><th>Where the answers came from</th><th style="text-align:right">Questions</th></tr>` +
+    Object.entries(DATA.src).map(([k, s]) => `<tr><td>${esc(s.n)}</td><td class="f">${esc(s.f)}</td><td>${esc(s.h)}</td><td class="c">${used[k] || 0}</td></tr>`).join("");
+  $("chTable").innerHTML = `<tr><th>Chapter</th><th>Topic</th><th>Slide file (in slides/)</th><th style="text-align:right">Questions</th></tr>` +
+    Object.entries(DATA.ch).map(([n, c]) => `<tr><td>${n}</td><td>${esc(c.n)}</td><td class="f">${esc(c.f)}</td><td class="c">${DATA.q.filter(q => q.ch === +n).length}</td></tr>`).join("");
+  $("skipList").innerHTML = DATA.skipped.map(s => `<li>${esc(s)}</li>`).join("");
+  $("lede").textContent = `${DATA.q.length} questions from ${Object.keys(DATA.src).length} past midterms, finals and quizzes, sorted by chapter. Pick an answer to check it. Every question says which paper it came from and where its answer came from.`;
+})();
+
+renderChapters();
+rebuild();
+</script>
