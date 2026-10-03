@@ -1,61 +1,69 @@
-**English** | [العربية](README.ar.md)
+[English](README.en.md) | **العربية**
 
-# Principles of Database Bank
+<div dir="rtl">
 
-Practice site for **CS370 Introduction to Database** (Imam Mohammad Ibn Saud Islamic University): 236 questions from past midterms, finals and quizzes, sorted by chapter (1–9), with instant checking.
+# بنك أسئلة مبادئ قواعد البيانات
 
-## How to use
+موقع تدريب لمقرر **CS370 مقدمة في قواعد البيانات** (جامعة الإمام محمد بن سعود الإسلامية): 236 سؤالًا من اختبارات الميدتيرم والنهائي والكويزات السابقة، مرتبة حسب الفصل (من 1 إلى 9)، مع تصحيح فوري.
 
-### Open it
+## طريقة الاستخدام
 
-1. On this repository's page, click **Code → Download ZIP**, then unzip it. (Or, if you use git: `git clone` the repository.)
-2. Double-click `index.html`. It opens in your browser.
+### فتح الموقع
 
-That's it. It is a single file with no installation, and it works offline.
+1. من صفحة هذا المستودع اضغط **Code ← Download ZIP**، ثم فك ضغط الملف. (أو إذا كنت تستخدم git: نفّذ `git clone` للمستودع.)
+2. اضغط مرتين على ملف `index.html` وسيفتح في المتصفح.
 
-### Practice
+هذا كل شيء. الموقع ملف واحد لا يحتاج إلى تثبيت، ويعمل بدون إنترنت.
 
-- **Pick a chapter:** the tabs at the top (**Ch 1** to **Ch 9**, or **All**). Each tab shows how many questions you've done and how many you got right.
-- **Answer:** click a choice. The correct answer turns green; if you picked wrong, your choice is crossed out in red. A short explanation appears underneath.
-- **Move between questions:** **Next →** and **← Previous**, or the arrow keys.
-- **Keyboard shortcuts:** `a`–`d` (or `1`–`4`) to choose, `t` / `f` for True/False, `←` `→` to move.
-- **Answer sheet:** the grid on the right works like the exam's answer table. It fills in as you go (green = correct, red = missed). Click any box to jump to that question.
-- **Written questions** (SQL, mapping, normalization): write your answer on paper first, click **Show model answer**, then mark yourself with **I got it** or **I missed it**.
+### التدريب
 
-### Filter and review
+- **اختر الفصل:** من التبويبات في الأعلى (من **Ch 1** إلى **Ch 9**، أو **All** لكل الفصول). يعرض كل تبويب عدد الأسئلة التي حللتها وعدد إجاباتك الصحيحة.
+- **أجب:** اضغط على أحد الخيارات. تظهر الإجابة الصحيحة باللون الأخضر، وإذا أخطأت يُشطب اختيارك باللون الأحمر، ويظهر تحتها شرح مختصر.
+- **التنقل بين الأسئلة:** بزرَّي **Next →** و **← Previous**، أو بأسهم لوحة المفاتيح.
+- **اختصارات لوحة المفاتيح:** `a`–`d` (أو `1`–`4`) للاختيار، و `t` / `f` لأسئلة صح وخطأ، و `←` `→` للتنقل.
+- **ورقة الإجابة (Answer sheet):** الجدول على الجانب يشبه جدول الإجابات في ورقة الاختبار، ويمتلئ أثناء الحل (الأخضر = صحيح، الأحمر = خطأ). اضغط على أي مربع للانتقال إلى ذلك السؤال.
+- **الأسئلة الكتابية** (SQL، والتحويل إلى جداول Mapping، والتطبيع Normalization): اكتب إجابتك على ورقة أولًا، ثم اضغط **Show model answer** لعرض الإجابة النموذجية، وقيّم نفسك بـ **I got it** (أصبت) أو **I missed it** (أخطأت).
 
-- **Show** menu:
-  - **All questions**
-  - **Not answered yet**
-  - **Ones I missed** (good for revising before an exam)
-  - **Multiple choice & T/F only**
-  - **Written answers only**
-- **Shuffle:** randomizes the question order.
-- **Clear answers:** resets your answers for the chapter you're on (it asks before clearing).
+### التصفية والمراجعة
 
-Your progress is saved in the browser on your device. It won't carry over to another browser or device.
+- **قائمة Show:**
+  - **All questions:** كل الأسئلة
+  - **Not answered yet:** الأسئلة التي لم تحلها بعد
+  - **Ones I missed:** الأسئلة التي أخطأت فيها، وهي مفيدة للمراجعة قبل الاختبار
+  - **Multiple choice & T/F only:** أسئلة الاختيار من متعدد وصح وخطأ فقط
+  - **Written answers only:** الأسئلة الكتابية فقط
+- **Shuffle:** يرتب الأسئلة عشوائيًا.
+- **Clear answers:** يمسح إجاباتك في الفصل الذي أنت فيه (يطلب منك التأكيد قبل المسح).
 
-## Where the answers come from
+يُحفظ تقدّمك في المتصفح على جهازك فقط، ولا ينتقل إلى متصفح أو جهاز آخر.
 
-Every question shows which exam it came from and where its answer came from:
+## مصدر الإجابات
 
-| Label | Meaning |
+يوضح كل سؤال الاختبار الذي أُخذ منه ومصدر إجابته:
+
+| الوسم | المعنى |
 |---|---|
-| Official key | Answer key printed in the exam file |
-| Graded paper | A student's paper the instructor marked |
-| Marked + checked | Answer selected on a quiz screenshot, checked against the slides |
-| From slides | No answer on the paper; taken from the chapter slides |
-| Worked out | No answer on the paper; worked out from the question's own tables or diagram |
+| Official key | نموذج الإجابة الرسمي الموجود في ملف الاختبار |
+| Graded paper | ورقة طالب صححها الأستاذ |
+| Marked + checked | إجابة محددة في صورة الكويز، وتم التحقق منها من السلايدات |
+| From slides | لا توجد إجابة في الورقة، والإجابة مأخوذة من سلايدات الفصل |
+| Worked out | لا توجد إجابة في الورقة، وتم حلها من الجداول أو المخطط الموجود في السؤال نفسه |
 
-The full source list is at the bottom of the page. **Worked out** answers are the ones most worth double-checking.
+القائمة الكاملة للمصادر موجودة في أسفل الصفحة. الإجابات الموسومة بـ **Worked out** هي الأولى بالتحقق منها.
 
-## Editing the questions
+## تعديل الأسئلة
 
-Questions live in `src/bank.py`, the page template in `src/page.html`, and exam diagrams in `src/img/`. Rebuild with:
+الأسئلة موجودة في `src/bank.py`، وقالب الصفحة في `src/page.html`، ومخططات الاختبارات في `src/img/`. لإعادة بناء الموقع:
+
+</div>
 
 ```bash
 pip install pymupdf
 python src/build.py
 ```
 
-This regenerates `index.html`.
+<div dir="rtl">
+
+سيؤدي ذلك إلى إعادة إنشاء ملف `index.html`.
+
+</div>
