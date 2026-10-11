@@ -113,6 +113,9 @@ nav.chapters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
 .prov.key, .prov.graded { background: var(--ok-soft); color: var(--ok); }
 .prov.marked { background: var(--pen-soft); color: var(--pen); }
 .prov.slides, .prov.worked { background: var(--chip); color: var(--warn); }
+.prov.drawing { background: var(--chip); color: var(--muted); }
+.qtext ul { margin: 8px 0 0; padding-left: 22px; display: grid; gap: 4px; font-size: 16.5px; font-weight: 400; }
+.qtext ul ul { margin-top: 4px; }
 .nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
 .kbd { font-size: 12px; color: var(--muted); align-self: center; }
 .empty { text-align: center; padding: 40px 10px; color: var(--muted); }
@@ -173,6 +176,7 @@ ul.skip { margin: 0; padding-left: 20px; color: var(--muted); font-size: 14px; m
         <option value="missed">Ones I missed</option>
         <option value="mcq">Multiple choice &amp; T/F only</option>
         <option value="reveal">Written answers only</option>
+        <option value="draw">Drawing questions only</option>
       </select>
       <button class="btn" id="shuffle" type="button" aria-pressed="false">Shuffle</button>
       <button class="btn" id="reset" type="button">Clear answers</button>
@@ -199,6 +203,7 @@ ul.skip { margin: 0; padding-left: 20px; color: var(--muted); font-size: 14px; m
       <li><span class="prov marked">MARKED + CHECKED</span> An answer selected on a quiz screenshot or boxed on the paper, which I checked against the slides.</li>
       <li><span class="prov slides">FROM SLIDES</span> The paper has no answer; the answer comes from the chapter slides.</li>
       <li><span class="prov worked">WORKED OUT</span> The paper has no answer; I worked it out from the tables or diagram printed in the question.</li>
+      <li><span class="prov drawing">NO MODEL ANSWER</span> A drawing question (ER/EER diagram or architecture). Draw it yourself; it doesn't count toward your score.</li>
     </ul>
     <h3 class="sub2">Exam files used</h3>
     <div class="tablewrap"><table class="src" id="srcTable"></table></div>
@@ -212,7 +217,7 @@ ul.skip { margin: 0; padding-left: 20px; color: var(--muted); font-size: 14px; m
 <script>
 const DATA = /*__DATA__*/null;
 const LETTERS = "abcdefgh";
-const PROV = { key: "OFFICIAL KEY", graded: "GRADED PAPER", marked: "MARKED + CHECKED", slides: "FROM SLIDES", worked: "WORKED OUT" };
+const PROV = { key: "OFFICIAL KEY", graded: "GRADED PAPER", marked: "MARKED + CHECKED", slides: "FROM SLIDES", worked: "WORKED OUT", drawing: "NO MODEL ANSWER" };
 const STORE = "cs370-exam-bank-v1";
 let state = {};
 try { state = JSON.parse(localStorage.getItem(STORE) || "{}") || {}; } catch (e) { state = {}; }
@@ -230,9 +235,10 @@ function seededShuffle(arr) {
 function pool() {
   let qs = DATA.q.filter(q => !chapter || q.ch === chapter);
   if (filter === "todo") qs = qs.filter(q => !state[q.id]);
-  if (filter === "missed") qs = qs.filter(q => state[q.id] && !state[q.id].ok);
+  if (filter === "missed") qs = qs.filter(q => state[q.id] && !state[q.id].ok && !state[q.id].done);
   if (filter === "mcq") qs = qs.filter(q => q.t === "mcq");
   if (filter === "reveal") qs = qs.filter(q => q.t === "reveal");
+  if (filter === "draw") qs = qs.filter(q => q.t === "draw");
   return qs;
 }
 function rebuild(keepId) {
@@ -265,7 +271,7 @@ function renderChapters() {
 }
 
 function renderScore() {
-  const vals = Object.values(state);
+  const vals = Object.values(state).filter(v => !v.done);
   $("sDone").textContent = vals.length;
   $("sOk").textContent = vals.filter(v => v.ok).length;
   $("sNo").textContent = vals.filter(v => !v.ok).length;
@@ -274,7 +280,7 @@ function renderScore() {
 function srcHtml(q) {
   const papers = q.s.map(k => `<b>${esc(DATA.src[k].n)}</b> <span>(${esc(DATA.src[k].f)})</span>`).join("<br>");
   const slide = `Chapter ${q.ch} slides (${esc(DATA.ch[q.ch].f)})`;
-  return `<div class="srcline"><div><span class="prov ${q.p}">${PROV[q.p]}</span>${q.p === "slides" ? "Answer from " + slide : q.p === "worked" ? "Answer worked out from the exam's own tables/diagram" : "Answer from the exam paper"}</div><div>Question from: ${papers}</div></div>`;
+  return `<div class="srcline"><div><span class="prov ${q.p}">${PROV[q.p]}</span>${q.p === "slides" ? "Answer from " + slide : q.p === "worked" ? "Answer worked out from the exam's own tables/diagram" : q.p === "drawing" ? "Drawing question; no answer included" : "Answer from the exam paper"}</div><div>Question from: ${papers}</div></div>`;
 }
 
 function render() {
@@ -287,10 +293,10 @@ function render() {
   }
   const q = list[pos], st = state[q.id];
   const isTF = q.t === "mcq" && q.o.length === 2 && q.o[0] === "True";
-  let h = `<div class="qmeta"><span class="num">Q ${pos + 1} / ${list.length}</span><span class="pill">Chapter ${q.ch}</span><span class="pill">${q.t === "reveal" ? "Written" : isTF ? "True / False" : "Multiple choice"}</span></div>`;
+  let h = `<div class="qmeta"><span class="num">Q ${pos + 1} / ${list.length}</span><span class="pill">Chapter ${q.ch}</span><span class="pill">${q.t === "reveal" ? "Written" : q.t === "draw" ? "Drawing" : isTF ? "True / False" : "Multiple choice"}</span></div>`;
   if (q.img) h += `<figure class="figure"><img src="${DATA.img[q.img]}" alt="Diagram from the exam paper"><figcaption>Diagram from the exam paper</figcaption></figure>`;
   if (q.ctx) h += `<div class="ctx">${q.ctx}</div>`;
-  h += `<p class="qtext">${q.q}</p>`;
+  h += `<div class="qtext">${q.q}</div>`;
   if (q.t === "mcq") {
     h += `<div class="opts${isTF ? " tf" : ""}" role="group" aria-label="Answer choices">` + q.o.map((o, i) => {
       let cls = "", mk = "";
@@ -304,6 +310,11 @@ function render() {
     if (st) {
       h += `<div class="feedback"><div class="verdict ${st.ok ? "ok" : "no"}">${st.ok ? "Correct" : "Not quite. The answer is " + (isTF ? q.o[q.a] : "(" + LETTERS[q.a] + ") " + esc(q.o[q.a]))}</div>${q.e ? `<p class="why">${q.e}</p>` : ""}${srcHtml(q)}</div>`;
     }
+  } else if (q.t === "draw") {
+    h += `<div class="answer"><div class="eyebrow" style="margin-bottom:6px">No model answer</div><div class="model">Draw it on paper, then check it against the Chapter ${q.ch} slides or ask your instructor.</div></div>`;
+    h += `<div class="feedback">${q.e ? `<p class="why">${q.e}</p>` : ""}`;
+    h += st ? `<div class="selfmark"><span class="verdict ok">Marked as practised</span><button class="btn" type="button" id="undraw">Undo</button></div>` : `<div class="selfmark"><button class="btn primary" type="button" id="drew">Mark as practised</button><span class="kbd">Drawing questions don't count toward your score.</span></div>`;
+    h += srcHtml(q) + `</div>`;
   } else {
     const shown = st || (q._shown);
     if (!shown) h += `<button class="btn primary" type="button" id="reveal">Show model answer</button> <span class="kbd">Try writing it first.</span>`;
@@ -319,6 +330,8 @@ function render() {
   sheet.innerHTML = h;
   sheet.querySelectorAll(".opt:not([disabled])").forEach(b => b.onclick = () => answer(q, +b.dataset.i));
   if ($("reveal")) $("reveal").onclick = () => { q._shown = true; render(); };
+  if ($("drew")) $("drew").onclick = () => { state[q.id] = { done: true }; save(); renderChapters(); render(); };
+  if ($("undraw")) $("undraw").onclick = () => { delete state[q.id]; save(); renderChapters(); render(); };
   sheet.querySelectorAll("[data-self]").forEach(b => b.onclick = () => { state[q.id] = { pick: -1, ok: b.dataset.self === "1" }; save(); renderChapters(); render(); });
   $("prev").onclick = () => go(-1);
   $("next").onclick = () => go(1);
@@ -341,8 +354,8 @@ function renderGrid() {
   g.innerHTML = list.map((q, i) => {
     const st = state[q.id];
     let a = "";
-    if (st) a = q.t === "reveal" ? (st.ok ? "✓" : "✗") : (q.o.length === 2 && q.o[0] === "True" ? q.o[st.pick][0] : LETTERS[st.pick]);
-    return `<button class="cell ${st ? (st.ok ? "ok" : "no") : ""} ${i === pos ? "cur" : ""}" type="button" data-i="${i}" aria-label="Question ${i + 1}${st ? (st.ok ? ", correct" : ", missed") : ""}"><span class="i">${i + 1}</span><span class="a">${a}</span></button>`;
+    if (st) a = st.done ? "✎" : q.t === "reveal" ? (st.ok ? "✓" : "✗") : (q.o.length === 2 && q.o[0] === "True" ? q.o[st.pick][0] : LETTERS[st.pick]);
+    return `<button class="cell ${st && !st.done ? (st.ok ? "ok" : "no") : ""} ${i === pos ? "cur" : ""}" type="button" data-i="${i}" aria-label="Question ${i + 1}${st ? (st.done ? ", practised" : st.ok ? ", correct" : ", missed") : ""}"><span class="i">${i + 1}</span><span class="a">${a}</span></button>`;
   }).join("");
   g.querySelectorAll(".cell").forEach(c => c.onclick = () => { pos = +c.dataset.i; render(); });
   const cur = g.querySelector(".cur");

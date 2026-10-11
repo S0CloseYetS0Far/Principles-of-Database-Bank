@@ -1,6 +1,7 @@
 import json, base64, pymupdf, os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 from bank import Q
+import bank_added  # appends the later questions to Q
 HERE = os.path.dirname(__file__)
 
 SOURCES = {
@@ -25,10 +26,13 @@ SOURCES = {
  "Q26_2": ("Quiz 1, 2nd semester 2026", "Exams/Quiz/2026/Quiz1_2nd_2026.pdf", "Written questions; answers from the slides"),
  "Q22":   ("Quiz 1, Fall 2022", "Exams/Quiz/Quiz1-Fall2022/", "Graded student paper; answers taken from the parts marked correct"),
  "Q21":   ("Quiz 1, Fall 2021 (Ms. Amal Alamr)", "Exams/Quiz/Quiz1-Ms.AmalAlamr-Fall2021-cs370/", "Graded student paper; both MCQs were marked wrong, so the correct choice is from the slides"),
+ "M26":   ("Midterm 1, 2nd semester 2026", "Exams/Mid/Midterm1_2nd_2026.pdf", "No answers on the paper; answers from the slides"),
+ "M21_2": ("Midterm 2, 1st semester 2021", "Exams/Mid/Mid2-CS370-1st-2021-MA/", "Official model answer (photos of the answer PDF)"),
 }
 SKIPPED = [
- "Drawing questions (ER/EER diagrams for the restaurant, library, bank, NFL, motor-vehicle branch, university and bookstore cases) — there's no single right answer to check automatically.",
+ "Model answers for the drawing questions (ER/EER diagrams, three-schema architecture). The questions are in the bank, but there's no single right drawing to check against.",
  "Mapping questions whose diagram is too blurry or cut off (insurance company, hospital, Father/Child, Lecturer/Course).",
+ "SQL question 4 of Midterm 2, 1st semester 2021 — that page wasn't photographed.",
  "Quiz 1, 3rd semester 2024 — the file contains question stems only, no answer choices.",
  "Questions where the photo is cut off or the answer is genuinely ambiguous (e.g. the podcast 'Entity vs Instance' version in Quiz 1 2nd 2025, the 'NOT a type of data model' question in Quiz 1 Summer 2024, the Magazine normalization in Final 1st 2024).",
  "The Arabic recollection sheet on page 3 of Final_1st_2023.pdf.",
